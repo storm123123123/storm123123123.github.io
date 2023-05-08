@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Idle Game</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="shortcut icon" href="https://www.coolmathgames.com/sites/default/files/styles/pwa_512x512/public/game_m_thumbnail/idle-startup-tycoon-icon.png?itok=kDQzioiK" type="image/x-icon">
+  </head>
+  <body>
+    <button id="clickButton">Click to earn coins</button>
+    <div id="coinDisplay">0 coins</div>
+    <button id="upgradeButton">Upgrade to earn coins faster</button>
+    <div id="upgradeDisplay">You have 0 upgrades</div>
+    <button id="reset-button">Reset Game</button>
+
+    <script>
+      // Initialize variables
+      let coins = 0;
+      let coinRate = 1;
+      let upgrades = 0;
+      let upgradeRate = 2;
+      let upgradeCost = 500;
+
+      // Load saved progress
+      if (localStorage.getItem("coins") !== null) {
+        coins = parseInt(localStorage.getItem("coins"));
+      }
+      if (localStorage.getItem("upgrades") !== null) {
+        upgrades = parseInt(localStorage.getItem("upgrades"));
+        coinRate = Math.pow(upgradeRate, upgrades);
+        upgradeCost = getUpgradeCost(upgrades);
+      }
+
+      // Update display
+      function updateDisplay() {
+        document.getElementById("coinDisplay").innerHTML = coins + " coins";
+        document.getElementById(
+          "upgradeDisplay"
+        ).innerHTML = `You have ${upgrades} upgrades (x${coinRate} coin rate). Next upgrade costs ${upgradeCost} coins.`;
+      }
+
+      // Click button function
+      function clickButton() {
+        coins += coinRate;
+        updateDisplay();
+      }
+
+      // Upgrade button function
+      function upgradeButton() {
+        if (coins >= upgradeCost) {
+          coins -= upgradeCost;
+          upgrades++;
+          coinRate = Math.pow(upgradeRate, upgrades);
+          upgradeCost = getUpgradeCost(upgrades);
+          updateDisplay();
+        }
+      }
+
+      // Get upgrade cost based on number of upgrades purchased
+      function getUpgradeCost(upgrades) {
+        switch (upgrades) {
+          case 1:
+            return 500;
+          case 2:
+            return 5000;
+          case 3:
+            return 30000;
+          case 4:
+            return 60000;
+          case 5:
+            return 100000;
+          default:
+            return upgradeCost * 2;
+        }
+      }
+
+      // Save progress function
+      function saveProgress() {
+        localStorage.setItem("coins", coins);
+        localStorage.setItem("upgrades", upgrades);
+      }
+
+      // Save progress every 1 seconds
+      setInterval(saveProgress, 1000);
+
+      // Add event listeners
+      document.getElementById("clickButton").addEventListener("click", clickButton);
+      document.getElementById("upgradeButton").addEventListener("click", upgradeButton);
+      document.getElementById("reset-button").addEventListener("click", function () {
+        coins = 0;
+        upgrades = 0;
+        coinRate = 1;
+        upgradeCost = 500;
+        updateDisplay();
+        localStorage.clear();
+      });
+      function updateDisplay() {
+  document.getElementById("coinDisplay").innerHTML = coins + " coins";
+  document.getElementById(
+    "upgradeDisplay"
+  ).innerHTML = `You have ${upgrades} upgrades (x${coinRate} coin rate). Next upgrade costs ${upgradeCost} coins.`;
+  const storeName = localStorage.getItem("storeName");
+  document.getElementById("storeNameDisplay").innerHTML = `Welcome to ${storeName}!`;
+}
+document.getElementById("submitStoreName").addEventListener("click", submitStoreName);
+      // Initial display update
+      updateDisplay();
+    </script>
+  </body>
+</html>
